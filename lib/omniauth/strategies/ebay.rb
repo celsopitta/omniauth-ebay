@@ -31,7 +31,16 @@ module OmniAuth
             :ebay_token => @auth_token,
             :email => raw_info['Email'],
             :full_name => raw_info["RegistrationAddress"] && raw_info["RegistrationAddress"]["Name"],
-            :country => raw_info["RegistrationAddress"] && raw_info["RegistrationAddress"]["Country"]
+            :country => raw_info["RegistrationAddress"] && raw_info["RegistrationAddress"]["Country"],
+            :feedback_score => raw_info['FeedbackScore'],
+            :negative_count => raw_info['UniqueNegativeFeedbackCount'],
+            :positive_count => raw_info['UniquePositiveFeedbackCount'],
+            :positive_percent => raw_info['PositiveFeedbackPercent'],
+            :feedback_private => raw_info['FeedbackPrivate'],
+            :feedback_rating => raw_info['FeedbackRatingStar'],
+            :id_verified => raw_info['IDVerified'],
+            :good_standing => raw_info['eBayGoodStanding'],
+            :registration_date => raw_info['RegistrationDate']
         }
       end
 
@@ -57,6 +66,7 @@ module OmniAuth
       def callback_phase
         @auth_token = get_auth_token(request.params["username"], request.params["sid"])
         @user_info = get_user_info(request.params["username"], @auth_token)
+        #@user_feedback = get_user_feedback(request.params["username"], @auth_token)
         super
       rescue => ex
         fail!("Failed to retrieve user info from ebay", ex)
@@ -65,6 +75,11 @@ module OmniAuth
       def raw_info
         @user_info
       end
+
+      def raw_feedback
+        #@user_feedback
+      end
+
     end
   end
 end

@@ -27,12 +27,8 @@ module EbayAPI
             <RuName>#{options.runame}</RuName>
           </GetSessionIDRequest>
     )
-    puts "-------- chamando session id ---------------------"
-    pp request
 
     parsed_response, response = api(X_EBAY_API_GETSESSIONID_CALL_NAME, request)
-
-    puts "---------------------------------------------------"
 
     session_id = parsed_response && parsed_response["GetSessionIDResponse"] && parsed_response["GetSessionIDResponse"]["SessionID"]
 
@@ -87,6 +83,28 @@ module EbayAPI
     user
   end
 
+  def get_user_feedback(username, auth_token)
+    request = %Q(
+          <?xml version="1.0" encoding="utf-8"?>
+          <GetUserRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+            <DetailLevel>ReturnAll</DetailLevel>
+            <UserID>#{username}</UserID>
+            <RequesterCredentials>
+              <eBayAuthToken>#{auth_token}</eBayAuthToken>
+            </RequesterCredentials>
+            <WarningLevel>High</WarningLevel>
+          </GetUserRequest>
+    )
+
+    parsed_response, response = api(X_EBAY_API_GETUSER_CALL_NAME, request)
+    user = parsed_response && parsed_response["GetUserResponse"] && parsed_response["GetUserResponse"]["User"]
+
+    if (!user)
+      raise EbayApiError.new("Failed to retrieve user info", request, response)
+    end
+
+    user
+  end
   def ebay_login_url(session_id, ruparams={})
     url = "#{EBAY_LOGIN_URL}?#{options.auth_type}&runame=#{options.runame}&#{session_id_field_name}=#{CGI::escape(session_id)}"
 
