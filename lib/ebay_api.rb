@@ -109,6 +109,10 @@ module EbayAPI
     puts "------------------------------"
     http.use_ssl = true
     response = http.start { |h| h.request(req, request) }.body
+    puts "---------- request -----------"
+
+    pp response
+    puts "------------------------------"
     [MultiXml.parse(response), response]
   end
 
