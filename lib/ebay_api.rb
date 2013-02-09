@@ -101,6 +101,7 @@ module EbayAPI
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     response = http.start { |h| h.request(req, request) }.body
+    pp response
     [MultiXml.parse(response), response]
   end
 
