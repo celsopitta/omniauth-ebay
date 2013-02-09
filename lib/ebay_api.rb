@@ -27,8 +27,13 @@ module EbayAPI
             <RuName>#{options.runame}</RuName>
           </GetSessionIDRequest>
     )
+    puts "-------- chamando session id ---------------------"
+    pp request
 
     parsed_response, response = api(X_EBAY_API_GETSESSIONID_CALL_NAME, request)
+
+    puts "---------------------------------------------------"
+
     session_id = parsed_response && parsed_response["GetSessionIDResponse"] && parsed_response["GetSessionIDResponse"]["SessionID"]
 
     if (!session_id)
@@ -98,10 +103,12 @@ module EbayAPI
     headers = ebay_request_headers(call_name, request.length.to_s)
     url = URI.parse(options.apiurl)
     req = Net::HTTP::Post.new(url.path, headers)
+    puts "---------- request -----------"
     http = Net::HTTP.new(url.host, url.port)
+    pp req
+    puts "------------------------------"
     http.use_ssl = true
     response = http.start { |h| h.request(req, request) }.body
-    pp response
     [MultiXml.parse(response), response]
   end
 
